@@ -457,6 +457,13 @@ function goofCheck(){
         (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2) ||
         (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2) ||
         (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2) ||
+
+        // the reverse logic 2 of a type in dice bank and at least one of that type at play
+        (scoreBoard.filter(count => count === 2).length >= 1 && diceAtPlay.filter(count => count === 2).length >= 2) ||
+        (scoreBoard.filter(count => count === 3).length >= 1 && diceAtPlay.filter(count => count === 3).length >= 2) ||
+        (scoreBoard.filter(count => count === 4).length >= 1 && diceAtPlay.filter(count => count === 4).length >= 2) ||
+        (scoreBoard.filter(count => count === 6).length >= 1 && diceAtPlay.filter(count => count === 6).length >= 2) ||
+
         // or player has a set
         checkSet(diceAtPlay.concat(scoreBoard)) ||
         // or if player has a run of doubles ex. 3 pairs
