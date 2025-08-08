@@ -35,6 +35,9 @@ let currentPossiblePoints = 0;
 // the size of each block of both board and dice
 const cellSize = 25;
 
+// a variable for determining if the dice have been cast so we can check for a goof
+let diceRoled = false;
+
 function ranInt(min,max){
     min = min;
     max = max;
@@ -390,8 +393,6 @@ Promise.all([
 function handleCanvasClick(event) {
     const canvas = document.getElementById("gameBoardCanvas");
     const rect = canvas.getBoundingClientRect();
-    console.log("rect L "+rect.x)
-    console.log("mouserect "+event.clientX)
 
     // uses global cellSize
     // grab where the mouse is at click minus the offset of canves left or x all divided by cellsize gives
@@ -444,7 +445,7 @@ function handleCanvasClick(event) {
 function goofCheck(){
     let diceAtPlay = [];
     // after every die has stopped moving
-    if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
+    if(diceList.filter(die => die.numMoves <= 0).length === diceList.length && diceRoled){
         for(let i=0; i<diceList.length; i++){
             // save the dice on the table
             let diceFaceNum = diceList[i].dice_frame + 1;
@@ -464,12 +465,13 @@ function goofCheck(){
         diceAtPlay.filter(count => count === 1).length >= 1 || 
         diceAtPlay.filter(count => count === 5).length >= 1 
         ){
-            console.log('No Goof');
             goofed = false;
         }else{
-            console.log('Goofed');
             goofed = true;
         }
+        
+        // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
+        diceRoled = false;
     }
 }
 
@@ -494,11 +496,12 @@ document.getElementById("rollBtn").onclick = function(){
         for(let i=0;i<diceList.length;i++){
             diceList[i].prefMove();
         }
-        // check for a goof
-        setTimeout(goofCheck,1000);
+        
+        
         // reset after each roll
         diePickedUp = false;
-    }
+        diceRoled = true;
+    }    
 };
 
 // CHECK FOR IF PLAYER GOOFED
@@ -506,10 +509,6 @@ setInterval(catchGoof,200);
 function catchGoof(){
     // will toggle it self off until next goof
     if(goofed){
-        // switch current player turn
-        turnP1 = !turnP1;
-        
-        resetBoard();
         // display the player that Goofed
         if(turnP1){
             document.getElementById("currScore").innerHTML = "Current possible points: Player 1 Goofed";
@@ -517,14 +516,22 @@ function catchGoof(){
             document.getElementById("currScore").innerHTML = "Current possible points: Player 2 Goofed";
         }
         
+        // wait so user can see their goof
+        setTimeout(Goofed,1000);
+        // reset this trigger
+        goofed = false;
+    }
+}
+function Goofed(){
+    // switch current player turn
+        turnP1 = !turnP1;
+        
+        resetBoard();
         currentPossiblePoints = 0;
         scoreBoard = [];
         // reset to true so that fisrt roll can happen for next player
         diePickedUp = true;
         document.getElementById("keepScore").classList.add("hidden");
-        // reset this trigger
-        goofed = false;
-    }
 }
 
 // When player presses the keep score button
@@ -573,7 +580,6 @@ function resetBoard(){
 }
 
 function checkSet(list) {
-    console.log('set '+ list);
     return new Set(list).size === list.length;
 }
 
@@ -621,6 +627,8 @@ function scoreIt(scoreList){
 // displays who's turn it currently is
 setInterval(currentTurn,200);
 function currentTurn(){
+    // check for a goof
+    setTimeout(goofCheck,100);
     if(turnP1){
         document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
     }else{
