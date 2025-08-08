@@ -157,7 +157,14 @@ button {
     font-size: 10px;
     margin: 0px;
     padding: 0px;
-    width: 150px;
+    width: 100px;
+    height: 25px;
+  }
+  #keepScore {
+    font-size: 10px;
+    margin: 0px;
+    padding: 0px;
+    width: 100px;
     height: 25px;
   }
 }
