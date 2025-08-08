@@ -1,2 +1,4 @@
 # DiceGameGoofed
-Dice game similar to a dice game that originated in the early 1600's called dice and has had many names since then.
+Dice game similar to a dice game that originated in the early 1600's called dice and has had many names since then.  
+  
+Try it out: https://michaelgalloway404.github.io/DiceGameGoofed/
