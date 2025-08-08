@@ -5,113 +5,13 @@
   border: solid 2px #08809e;
   background-color: rgb(12, 81, 95);
 }
-.center2 {
-  display: flex;
-  text-align: center;
-  border: solid 2px #08809e;
-  background-color: rgb(12, 81, 95);
-}
 
 .hidden {
   display: none !important;
 }
 
-.square {
-  border: solid 5px #ffffff63;
-  background-color: #ffffffbf;
-  border-radius: 10px;
-}
-
-.rulesButton {
-  float: left;
-  margin: 10px;
-  border-radius: 10px;
-  background-color: #d9e272;
-  color: #250413;
-  font-size: 1.5rem;
-}
-
-.DirButton {
-  margin: 10px;
-  border-radius: 10px;
-  background-color: #ffffff;
-  color: #250413;
-  font-size: 1.5rem;
-}
-
-.DirButton:hover,
-.rulesButton:hover {
-  border-radius: 10px;
-  background-color: #cfd9dc;
-  color: #250413;
-  font-size: 1.5rem;
-}
-
-.DirButton:active,
-.rulesButton:active {
-  border-radius: 10px;
-  background-color: #92a8af;
-  color: #76680d;
-  font-size: 1.5rem;
-  box-shadow: #ffffff;
-}
-
-.panel {
-  background-color: rgba(0, 0, 0, 0.338);
-  border-radius: 10px;
-  margin: 10px;
-  display: grid;
-  grid-template-columns: repeat(5, auto);
-  grid-template-rows: repeat(5, auto);
-  max-width: 600px;
-  max-height: 700px;
-  min-height: 380px;
-  margin-left: 30%;
-  gap: 2%;
-}
-
-@media screen and (max-width: 700px) {
-  .panel {
-    margin: 10px;
-    display: grid;
-    grid-template-columns: repeat(5, auto);
-    grid-template-rows: repeat(5, auto);
-    max-width: 600px;
-    max-height: 700px;
-    min-height: 380px;
-    gap: 2%;
-  }
-
-}
-
-.red {
-  background-color: rgb(242, 111, 111);
-  border-radius: 10px;
-}
-
-.green {
-  background-color: rgb(32, 175, 0);
-  border-radius: 10px;
-}
-
-.rules {
-  margin: 10px;
-  float: left;
-  width: auto;
-  font-size: 1em;
-  color: #DBEDF3;
-  text-shadow: 0 2px #250413;
-}
-
 body {
   background-color: #283149;
-}
-
-.score {
-  font-size: 2rem;
-  color: #DBEDF3;
-  font-family: "Arvo", cursive;
-  text-shadow: 3px 0 #250413;
 }
 
 h1 {
@@ -123,11 +23,6 @@ h1 {
 button {
   background-size: contain;
   background-repeat: no-repeat;
-}
-
-.submit,
-.undo {
-  float: left;
 }
 
 #StagedDice{
