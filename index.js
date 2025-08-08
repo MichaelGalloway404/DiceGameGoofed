@@ -607,16 +607,16 @@ function scoreIt(scoreList){
     let total = 0;
     // check for triples or greater
     let sum = scoreList.filter(die => die == 2).length;
-    if(sum >=3) total += sum * 50 * 2;
+    if(sum >=3) total += sum * 25 * 2;
 
     sum = scoreList.filter(die => die == 3).length;
-    if(sum >=3) total += sum * 50 * 3;
+    if(sum >=3) total += sum * 25 * 3;
 
     sum = scoreList.filter(die => die == 4).length;
-    if(sum >=3) total += sum * 50 * 4;
+    if(sum >=3) total += sum * 25 * 4;
 
     sum = scoreList.filter(die => die == 6).length;
-    if(sum >=3) total += sum * 50 * 6;
+    if(sum >=3) total += sum * 25 * 6;
 
     // check for 1's or 5's
     total += scoreList.filter(die => die == 1).length * 100 
