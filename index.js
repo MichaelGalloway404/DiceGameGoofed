@@ -547,6 +547,8 @@ document.getElementById("keepScore").onclick = function(){
     }
     // empty score board
     scoreBoard = [];
+    // set to true for next players first role
+    diePickedUp = true;
     // switch current player turn
     turnP1 = !turnP1;
     update_display();
