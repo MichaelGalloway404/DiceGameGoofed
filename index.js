@@ -461,9 +461,14 @@ function goofCheck(){
         checkSet(diceAtPlay.concat(scoreBoard)) ||
         // or if player has a run of doubles ex. 3 pairs
         checkDoubles(diceAtPlay.concat(scoreBoard)) ||
-        // or they at least roled a 1 or 5 then no Goof
+        // or they at least roled a 1 or 5 
         diceAtPlay.filter(count => count === 1).length >= 1 || 
-        diceAtPlay.filter(count => count === 5).length >= 1 
+        diceAtPlay.filter(count => count === 5).length >= 1 ||
+        // or there is three or more of a kind on the table then no Goof
+        diceAtPlay.filter(count => count === 2).length >= 2 ||
+        diceAtPlay.filter(count => count === 3).length >= 2 ||
+        diceAtPlay.filter(count => count === 4).length >= 2 ||
+        diceAtPlay.filter(count => count === 6).length >= 2 
         ){
             goofed = false;
         }else{
