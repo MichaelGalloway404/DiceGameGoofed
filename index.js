@@ -35,6 +35,9 @@ let currentPossiblePoints = 0;
 // the size of each block of both board and dice
 const cellSize = 25;
 
+// optional single player against an NPC
+let singlePlayer = false;
+
 // a variable for determining if the dice have been cast so we can check for a goof
 let diceRoled = false;
 
@@ -637,13 +640,70 @@ function scoreIt(scoreList){
 }
 
 // displays who's turn it currently is
-setInterval(currentTurn,200);
+setInterval(currentTurn,2000);
 function currentTurn(){
     // check for a goof
-    setTimeout(goofCheck,100);
+    if(!diePickedUp){
+        setTimeout(goofCheck,100);
+    }
     if(turnP1){
         document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
     }else{
         document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+    }
+
+    if (!turnP1 && singlePlayer) {
+        npcTurn();
+    }
+}
+
+
+
+function npcTurn() {
+    // Only act if it's Player 2's turn
+    if (!turnP1 ) {
+        // roll die
+        document.getElementById("rollBtn").click();
+
+        // wait for all die to stop rolling
+        if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
+            if (!turnP1 && diceList.length > 0) { // still their turn
+                
+                // find a scoring die (prefer 1 or 5)
+                let targetDieIndex = diceList.findIndex(die => 
+                    die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
+                );
+                // // If no 1 or 5, just grab the first die
+                // if (targetDieIndex === -1) targetDieIndex = 0;
+                
+                if (targetDieIndex >= 0) {
+                    const die = diceList[targetDieIndex];
+                    const diceStagingArea = document.getElementById('StagedDice');
+
+                    let diceFaceNum = die.dice_frame + 1;
+                    const chosenDie = document.createElement('div');
+                    chosenDie.className = 'Die_' + diceFaceNum;
+                    diceStagingArea.appendChild(chosenDie);
+
+                    scoreBoard.push(diceFaceNum);
+
+                    diceList.splice(targetDieIndex, 1);
+                    // diePickedUp = true;
+
+                    // Save current possible points
+                    currentPossiblePoints = scoreIt(scoreBoard);
+                    document.getElementById("currScore").innerHTML = "Current possible points: " + currentPossiblePoints;
+                    update_display();
+                }else{
+                    // document.getElementById("keepScore").click();
+                    if(ranInt(0,1) == 1){
+                        document.getElementById("keepScore").click();
+                    }else{
+                        diePickedUp = true;
+                        document.getElementById("rollBtn").click();
+                    }
+                }
+            }
+        }
     }
 }
