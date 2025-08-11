@@ -690,90 +690,91 @@ function npcTurn() {
         if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
             // check if we goofed after dice settle
             agentGoof = goofCheck();
+            if(!agentGoof){
+                // only applies if dice are on the table
+                let chanceToRollAgain = 100; // a % chance
+                // there are die to pick up
+                if (diceList.length > 0) {
 
-            // only applies if dice are on the table
-            let chanceToRollAgain = 100; // a % chance
-            // there are die to pick up
-            if (diceList.length > 0) {
+                    let targetDieIndex = 0;
+                    let diceAtPlay = diceOnTable();
+                    // if we are lucky and a set is found on 1st roll
+                    if(new Set(diceAtPlay).size === 6 || new Set(diceAtPlay.concat(scoreBoard)).size === 6){
+                        targetDieIndex = 0;
+                    }else if(checkDoubles(diceAtPlay)||checkDoubles(diceAtPlay.concat(scoreBoard))){
+                        targetDieIndex = 0;
+                    }
+                    else if(diceAtPlay.filter(count => count === 6).length > 2 ||
+                        (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2)||
+                        (diceAtPlay.filter(count => count === 6).length >= 2 && scoreBoard.filter(count => count === 6).length >= 1)
+                    ){
+                        targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 6);
+                    }
+                    else if(diceAtPlay.filter(count => count === 4).length > 2 ||
+                            (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2)||
+                            (diceAtPlay.filter(count => count === 4).length >= 2 && scoreBoard.filter(count => count === 4).length >= 1)){
+                        targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 4);
+                    }
+                    else if(diceAtPlay.filter(count => count === 3).length > 2 ||
+                            (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2)||
+                            (diceAtPlay.filter(count => count === 3).length >= 2 && scoreBoard.filter(count => count === 3).length >= 1)){
+                        targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 3);
+                    }
+                    else if(diceAtPlay.filter(count => count === 2).length > 2 ||
+                            (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2)||
+                            (diceAtPlay.filter(count => count === 2).length >= 2 && scoreBoard.filter(count => count === 2).length >= 1)){
+                        targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 2);
+                    }
+                    else{
+                        // find a scoring die ( 1 or 5 )
+                        targetDieIndex = diceList.findIndex(die => 
+                            die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
+                        );
+                    }
+                    
+                    // the less dice we have the less likely we are to role again
+                    chanceToRollAgain -= ((6 - diceAtPlay.length) * 15); 
+                    if(targetDieIndex < 0 ){
+                        diePickedUp = true;
+                    }
+                    // if there are 1's or 5's
+                    if (targetDieIndex >= 0) {
+                        // add chosen die to dice bank
+                        const die = diceList[targetDieIndex];
+                        const diceStagingArea = document.getElementById('StagedDice');
+                        let diceFaceNum = die.dice_frame + 1;
+                        const chosenDie = document.createElement('div');
+                        chosenDie.className = 'Die_' + diceFaceNum;
+                        diceStagingArea.appendChild(chosenDie);
 
-                let targetDieIndex = 0;
-                let diceAtPlay = diceOnTable();
-                // if we are lucky and a set is found on 1st roll
-                if(new Set(diceAtPlay).size === 6 || new Set(diceAtPlay.concat(scoreBoard)).size === 6){
-                    targetDieIndex = 0;
-                }else if(checkDoubles(diceAtPlay.concat(scoreBoard))){
-                    targetDieIndex = 0;
-                }
-                else if(diceAtPlay.filter(count => count === 6).length > 2 ||
-                    (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2)||
-                    (diceAtPlay.filter(count => count === 6).length >= 2 && scoreBoard.filter(count => count === 6).length >= 1)
-                ){
-                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 6);
-                }
-                else if(diceAtPlay.filter(count => count === 4).length > 2 ||
-                        (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2)||
-                        (diceAtPlay.filter(count => count === 4).length >= 2 && scoreBoard.filter(count => count === 4).length >= 1)){
-                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 4);
-                }
-                else if(diceAtPlay.filter(count => count === 3).length > 2 ||
-                        (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2)||
-                        (diceAtPlay.filter(count => count === 3).length >= 2 && scoreBoard.filter(count => count === 3).length >= 1)){
-                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 3);
-                }
-                else if(diceAtPlay.filter(count => count === 2).length > 2 ||
-                        (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2)||
-                        (diceAtPlay.filter(count => count === 2).length >= 2 && scoreBoard.filter(count => count === 2).length >= 1)){
-                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 2);
-                }
-                else{
-                    // find a scoring die ( 1 or 5 )
-                    targetDieIndex = diceList.findIndex(die => 
-                        die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
-                    );
-                }
-                
-                // the less dice we have the less likely we are to role again
-                chanceToRollAgain -= ((6 - diceAtPlay.length) * 17); 
-                if(targetDieIndex < 0 ){
-                    diePickedUp = true;
-                }
-                // if there are 1's or 5's
-                if (targetDieIndex >= 0) {
-                    // add chosen die to dice bank
-                    const die = diceList[targetDieIndex];
-                    const diceStagingArea = document.getElementById('StagedDice');
-                    let diceFaceNum = die.dice_frame + 1;
-                    const chosenDie = document.createElement('div');
-                    chosenDie.className = 'Die_' + diceFaceNum;
-                    diceStagingArea.appendChild(chosenDie);
+                        // add points to score board
+                        scoreBoard.push(diceFaceNum);
 
-                    // add points to score board
-                    scoreBoard.push(diceFaceNum);
+                        // remove die
+                        diceList.splice(targetDieIndex, 1);
 
-                    // remove die
-                    diceList.splice(targetDieIndex, 1);
-
-                    // Save current possible points
-                    currentPossiblePoints = scoreIt(scoreBoard);
-                    document.getElementById("currScore").innerHTML = "Current possible points: " + currentPossiblePoints;
-                    // show what has happend
-                    update_display();
-                }
-                // if there are no 1's or 5's
-                else{
-                    //
-                    if(ranInt(1,100) > chanceToRollAgain || diceList.length <= 0){
-                        document.getElementById("keepScore").click();
-                    }else{
-                        // if there is still dice and player didn't goof
-                        if(diceList.length > 0 && !agentGoof && diePickedUp){
-                            // diePickedUp = true;
-                            // roll again
-                            document.getElementById("rollBtn").click();
+                        // Save current possible points
+                        currentPossiblePoints = scoreIt(scoreBoard);
+                        document.getElementById("currScore").innerHTML = "Current possible points: " + currentPossiblePoints;
+                        // show what has happend
+                        update_display();
+                    }
+                    // if there are no 1's or 5's
+                    else{
+                        
+                        if(ranInt(1,100) > chanceToRollAgain || diceList.length <= 0){
+                            document.getElementById("keepScore").click();
                         }else{
-                            // else keep our score
-                            if(!agentGoof){
-                            document.getElementById("keepScore").click();}
+                            // if there is still dice and player didn't goof
+                            if(diceList.length > 0 && !agentGoof && diePickedUp){
+                                // diePickedUp = true;
+                                // roll again
+                                document.getElementById("rollBtn").click();
+                            }else{
+                                // else keep our score
+                                if(!agentGoof){
+                                document.getElementById("keepScore").click();}
+                            }
                         }
                     }
                 }
