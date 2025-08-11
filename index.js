@@ -41,6 +41,9 @@ let singlePlayer = true;
 // a variable for determining if the dice have been cast so we can check for a goof
 let diceRoled = false;
 
+// variable for game over to trigger winner
+let gameOver = false;
+
 function ranInt(min,max){
     min = min;
     max = max;
@@ -653,24 +656,41 @@ let agentGoof = false;
 // displays who's turn it currently is
 setInterval(currentTurn,1000);
 function currentTurn(){
-    if(!singlePlayer){
-        setTimeout(goofCheck,100);
-        if(turnP1){
-            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+    if(player_1_score >= 500 || player_2_score >= 5000){
+        gameOver = true;
+        document.getElementById("rollBtn").classList.add("hidden");
+        document.getElementById("gameBoardCanvas").classList.add("hidden");
+    }
+    if(!gameOver){
+        if(!singlePlayer){
+            setTimeout(goofCheck,100);
+            if(turnP1){
+                document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+            }else{
+                document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+            }
         }else{
-            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+            if(turnP1){
+                setTimeout(goofCheck,100);
+                document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+                agentGoof = false;
+            }else{
+                document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+            }
+            if (!turnP1 && singlePlayer && !agentGoof) {
+                npcTurn();
+            }
         }
     }else{
-        if(turnP1){
-            setTimeout(goofCheck,100);
-            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
-            agentGoof = false;
-        }else{
-            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+        
+        if(player_1_score > player_2_score){
+            document.getElementById("currScore").innerHTML = "P1 Winner";
+        }else if(player_1_score < player_2_score){
+            document.getElementById("currScore").innerHTML = "P2 Winner";
+        }else if( player_1_score == player_2_score){
+            document.getElementById("currScore").innerHTML = "Tieieie";
         }
-        if (!turnP1 && singlePlayer && !agentGoof) {
-            npcTurn();
-        }
+        
     }
 }
 
