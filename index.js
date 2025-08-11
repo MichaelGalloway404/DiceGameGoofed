@@ -36,7 +36,7 @@ let currentPossiblePoints = 0;
 const cellSize = 25;
 
 // optional single player against an NPC
-let singlePlayer = false;
+let singlePlayer = true;
 
 // a variable for determining if the dice have been cast so we can check for a goof
 let diceRoled = false;
@@ -444,16 +444,21 @@ function handleCanvasClick(event) {
     currentPossiblePoints = scoreIt(scoreBoard);
 }
 
+function diceOnTable(){
+    let tableDice = [];
+    for(let i=0; i<diceList.length; i++){
+        // save the dice on the table
+        let diceFaceNum = diceList[i].dice_frame + 1;
+        tableDice.push(diceFaceNum);
+    }
+    return tableDice;
+}
+
 // checks of player has bungled their turn
 function goofCheck(){
-    let diceAtPlay = [];
+    let diceAtPlay = diceOnTable();
     // after every die has stopped moving
     if(diceList.filter(die => die.numMoves <= 0).length === diceList.length && diceRoled){
-        for(let i=0; i<diceList.length; i++){
-            // save the dice on the table
-            let diceFaceNum = diceList[i].dice_frame + 1;
-            diceAtPlay.push(diceFaceNum);
-        }
 
         if( // if num of specific die on table is at least 1 and we have at least 2 more in the saved dice area then no Goof
         (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2) ||
@@ -480,13 +485,16 @@ function goofCheck(){
         diceAtPlay.filter(count => count === 4).length >= 2 ||
         diceAtPlay.filter(count => count === 6).length >= 2 
         ){
+            // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
+            diceRoled = false;
             goofed = false;
+            return false;
         }else{
+            // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
+            diceRoled = false;
             goofed = true;
+            return true;
         }
-        
-        // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
-        diceRoled = false;
     }
 }
 
@@ -571,6 +579,9 @@ document.getElementById("keepScore").onclick = function(){
     scoreBoard = [];
     // set to true for next players first role
     diePickedUp = true;
+    if(turnP1){
+        agentGoof = false;
+    }
     // switch current player turn
     turnP1 = !turnP1;
     update_display();
@@ -638,69 +649,132 @@ function scoreIt(scoreList){
     total += scoreList.filter(die => die == 5).length * 50
     return total;
 }
-
+let agentGoof = false;
 // displays who's turn it currently is
-setInterval(currentTurn,2000);
+setInterval(currentTurn,1000);
 function currentTurn(){
-    // check for a goof
-    if(!diePickedUp){
+    if(!singlePlayer){
         setTimeout(goofCheck,100);
-    }
-    if(turnP1){
-        document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+        if(turnP1){
+            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+        }else{
+            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+        }
     }else{
-        document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
-    }
-
-    if (!turnP1 && singlePlayer) {
-        npcTurn();
+        if(turnP1){
+            setTimeout(goofCheck,100);
+            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
+            agentGoof = false;
+        }else{
+            document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
+        }
+        if (!turnP1 && singlePlayer && !agentGoof) {
+            npcTurn();
+        }
     }
 }
 
-
-
+// this function is call every secound if it is not player 1's turn
 function npcTurn() {
     // Only act if it's Player 2's turn
-    if (!turnP1 ) {
+    if (!turnP1) {
+        // if there are no die to pick up and we didn't goof then keep score
+        if(diceList.length <= 0){
+            document.getElementById("keepScore").click();
+            return;
+        }
         // roll die
-        document.getElementById("rollBtn").click();
+        document.getElementById("rollBtn").click(); // trys to run this each time but diePickedUp != true yet, only on 1st role
 
         // wait for all die to stop rolling
         if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
-            if (!turnP1 && diceList.length > 0) { // still their turn
+            // check if we goofed after dice settle
+            agentGoof = goofCheck();
+
+            // only applies if dice are on the table
+            let chanceToRollAgain = 100; // a % chance
+            // there are die to pick up
+            if (diceList.length > 0) {
+
+                let targetDieIndex = 0;
+                let diceAtPlay = diceOnTable();
+                // if we are lucky and a set is found on 1st roll
+                if(new Set(diceAtPlay).size === 6 || new Set(diceAtPlay.concat(scoreBoard)).size === 6){
+                    targetDieIndex = 0;
+                }else if(checkDoubles(diceAtPlay.concat(scoreBoard))){
+                    targetDieIndex = 0;
+                }
+                else if(diceAtPlay.filter(count => count === 6).length > 2 ||
+                    (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2)||
+                    (diceAtPlay.filter(count => count === 6).length >= 2 && scoreBoard.filter(count => count === 6).length >= 1)
+                ){
+                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 6);
+                }
+                else if(diceAtPlay.filter(count => count === 4).length > 2 ||
+                        (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2)||
+                        (diceAtPlay.filter(count => count === 4).length >= 2 && scoreBoard.filter(count => count === 4).length >= 1)){
+                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 4);
+                }
+                else if(diceAtPlay.filter(count => count === 3).length > 2 ||
+                        (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2)||
+                        (diceAtPlay.filter(count => count === 3).length >= 2 && scoreBoard.filter(count => count === 3).length >= 1)){
+                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 3);
+                }
+                else if(diceAtPlay.filter(count => count === 2).length > 2 ||
+                        (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2)||
+                        (diceAtPlay.filter(count => count === 2).length >= 2 && scoreBoard.filter(count => count === 2).length >= 1)){
+                    targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 2);
+                }
+                else{
+                    // find a scoring die ( 1 or 5 )
+                    targetDieIndex = diceList.findIndex(die => 
+                        die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
+                    );
+                }
                 
-                // find a scoring die (prefer 1 or 5)
-                let targetDieIndex = diceList.findIndex(die => 
-                    die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
-                );
-                // // If no 1 or 5, just grab the first die
-                // if (targetDieIndex === -1) targetDieIndex = 0;
-                
+                // the less dice we have the less likely we are to role again
+                chanceToRollAgain -= ((6 - diceAtPlay.length) * 17); 
+                if(targetDieIndex < 0 ){
+                    diePickedUp = true;
+                }
+                // if there are 1's or 5's
                 if (targetDieIndex >= 0) {
+                    // add chosen die to dice bank
                     const die = diceList[targetDieIndex];
                     const diceStagingArea = document.getElementById('StagedDice');
-
                     let diceFaceNum = die.dice_frame + 1;
                     const chosenDie = document.createElement('div');
                     chosenDie.className = 'Die_' + diceFaceNum;
                     diceStagingArea.appendChild(chosenDie);
 
+                    // add points to score board
                     scoreBoard.push(diceFaceNum);
 
+                    // remove die
                     diceList.splice(targetDieIndex, 1);
-                    // diePickedUp = true;
 
                     // Save current possible points
                     currentPossiblePoints = scoreIt(scoreBoard);
                     document.getElementById("currScore").innerHTML = "Current possible points: " + currentPossiblePoints;
+                    // show what has happend
                     update_display();
-                }else{
-                    // document.getElementById("keepScore").click();
-                    if(ranInt(0,1) == 1){
+                }
+                // if there are no 1's or 5's
+                else{
+                    //
+                    if(ranInt(1,100) > chanceToRollAgain || diceList.length <= 0){
                         document.getElementById("keepScore").click();
                     }else{
-                        diePickedUp = true;
-                        document.getElementById("rollBtn").click();
+                        // if there is still dice and player didn't goof
+                        if(diceList.length > 0 && !agentGoof && diePickedUp){
+                            // diePickedUp = true;
+                            // roll again
+                            document.getElementById("rollBtn").click();
+                        }else{
+                            // else keep our score
+                            if(!agentGoof){
+                            document.getElementById("keepScore").click();}
+                        }
                     }
                 }
             }
