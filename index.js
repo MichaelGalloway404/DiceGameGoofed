@@ -656,7 +656,7 @@ let agentGoof = false;
 // displays who's turn it currently is
 setInterval(currentTurn,1000);
 function currentTurn(){
-    if(player_1_score >= 500 || player_2_score >= 5000){
+    if(player_1_score >= 5000 || player_2_score >= 5000){
         gameOver = true;
         document.getElementById("rollBtn").classList.add("hidden");
         document.getElementById("gameBoardCanvas").classList.add("hidden");
