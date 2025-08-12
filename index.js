@@ -705,6 +705,8 @@ function npcTurn() {
         }
         // roll die
         document.getElementById("rollBtn").click(); // trys to run this each time but diePickedUp != true yet, only on 1st role
+        // prevents random pick up when SetInterval triggers
+        diePickedUp = false;
 
         // wait for all die to stop rolling
         if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
