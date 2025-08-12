@@ -483,10 +483,10 @@ function goofCheck(){
         diceAtPlay.filter(count => count === 1).length >= 1 || 
         diceAtPlay.filter(count => count === 5).length >= 1 ||
         // or there is three or more of a kind on the table then no Goof
-        diceAtPlay.filter(count => count === 2).length >= 2 ||
-        diceAtPlay.filter(count => count === 3).length >= 2 ||
-        diceAtPlay.filter(count => count === 4).length >= 2 ||
-        diceAtPlay.filter(count => count === 6).length >= 2 
+        diceAtPlay.filter(count => count === 2).length > 2 ||
+        diceAtPlay.filter(count => count === 3).length > 2 ||
+        diceAtPlay.filter(count => count === 4).length > 2 ||
+        diceAtPlay.filter(count => count === 6).length > 2 
         ){
             // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
             diceRoled = false;
@@ -531,7 +531,7 @@ document.getElementById("rollBtn").onclick = function(){
 };
 
 // CHECK FOR IF PLAYER GOOFED
-setInterval(catchGoof,200);
+setInterval(catchGoof,500);
 function catchGoof(){
     // will toggle it self off until next goof
     if(goofed){
@@ -543,7 +543,7 @@ function catchGoof(){
         }
         
         // wait so user can see their goof
-        setTimeout(Goofed,1000);
+        setTimeout(Goofed,200);
         // reset this trigger
         goofed = false;
     }
