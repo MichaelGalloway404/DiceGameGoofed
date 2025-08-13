@@ -21,12 +21,32 @@
  
  
 
-
   <div class="center">
-    <canvas id="gameBoardCanvas" width="250" height="250"></canvas>
+    <button id="twoPlayer">Two-Player</button>
+    <button id="singlePlayer">Single-Player</button>
+    <button class="rulesButton">rules</button>
   </div>
   <div class="center">
-    <button id="rollBtn">Roll Dice</button>
+    <canvas id="gameBoardCanvas" class="hidden" width="250" height="250"></canvas>
+    <h1 id="gameOverBanner" class="hidden"></h1>
+  </div>
+  <div class="center">
+    <p class="rules hidden">
+        The First player to reach 5000 points wins. <br><br>
+        The player to go first is deciced randomly. <br><br>
+        1's are 100 points each.<br><br>
+        5's are 50  points each.<br><br>
+        2, 3, 4, and 6 must have at least 3 or more of their number to score.<br><br>
+        2's are 50  points each.<br><br>
+        3's are 75  points each.<br><br>
+        4's are 100 points each.<br><br>
+        6's are 150 points each.<br><br>
+        Three unique pairs are worth 1500 points ex. 1, 1, 2, 2, 4, 4.<br><br>
+        A Staight 1, 2, 3, 4, 5, 6 is worth 2500 points.
+    </p>
+  </div>
+  <div class="center">
+    <button id="rollBtn" class="hidden">Roll Dice</button>
     <button id="keepScore" class="hidden">Keep Score</button>
   </div>
   <div class="center">

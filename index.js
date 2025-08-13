@@ -24,8 +24,11 @@ let scoreBoard = [];
 
 let player_1_score = 0;
 let player_2_score = 0;
+
+
 // toggles who turn it is currently
-let turnP1 = true;
+let turnP1 = true; // randomly choose who goes 1st
+
 // indicates if player has lost their turn or not
 let goofed = false;
 // start out as true so that fisrt roll can happen
@@ -36,7 +39,7 @@ let currentPossiblePoints = 0;
 const cellSize = 25;
 
 // optional single player against an NPC
-let singlePlayer = true;
+let singlePlayer = false;
 
 // a variable for determining if the dice have been cast so we can check for a goof
 let diceRoled = false;
@@ -336,7 +339,6 @@ diceList.push(new Dice(startPosses[4][0], startPosses[4][1], board, dice_sprites
 diceList.push(new Dice(startPosses[5][0], startPosses[5][1], board, dice_spritesheet, 5));
 diceList.push(new Dice(startPosses[6][0], startPosses[6][1],  board, dice_spritesheet, 6));
 
-
 // draws game to the screen
 function update_display() {
     // for display game board
@@ -501,7 +503,6 @@ function goofCheck(){
     }
 }
 
-
 // roll dice button 
 document.getElementById("rollBtn").onclick = function(){
     // button only works if a dice has been used and at least one die is on the board
@@ -522,7 +523,6 @@ document.getElementById("rollBtn").onclick = function(){
         for(let i=0;i<diceList.length;i++){
             diceList[i].prefMove();
         }
-        
         
         // reset after each roll
         diePickedUp = false;
@@ -636,16 +636,16 @@ function scoreIt(scoreList){
     let total = 0;
     // check for triples or greater
     let sum = scoreList.filter(die => die == 2).length;
-    if(sum >=3) total += sum * 25 * 2;
+    if(sum >=3) total += sum * 50;
 
     sum = scoreList.filter(die => die == 3).length;
-    if(sum >=3) total += sum * 25 * 3;
+    if(sum >=3) total += sum * 75;
 
     sum = scoreList.filter(die => die == 4).length;
-    if(sum >=3) total += sum * 25 * 4;
+    if(sum >=3) total += sum * 100;
 
     sum = scoreList.filter(die => die == 6).length;
-    if(sum >=3) total += sum * 25 * 6;
+    if(sum >=3) total += sum * 150;
 
     // check for 1's or 5's
     total += scoreList.filter(die => die == 1).length * 100 
@@ -684,11 +684,14 @@ function currentTurn(){
     }else{
         
         if(player_1_score > player_2_score){
-            document.getElementById("currScore").innerHTML = "P1 Winner";
+            document.getElementById("gameOverBanner").innerHTML = "Winner Player 1!";
+            document.getElementById("gameOverBanner").classList.remove('hidden');
         }else if(player_1_score < player_2_score){
-            document.getElementById("currScore").innerHTML = "P2 Winner";
+            document.getElementById("gameOverBanner").innerHTML = "Winner Player 2!";
+            document.getElementById("gameOverBanner").classList.remove('hidden');
         }else if( player_1_score == player_2_score){
-            document.getElementById("currScore").innerHTML = "Tieieie";
+            document.getElementById("gameOverBanner").innerHTML = "Tieieie";
+            document.getElementById("gameOverBanner").classList.remove('hidden');
         }
         
     }
@@ -804,3 +807,31 @@ function npcTurn() {
         }
     }
 }
+
+// Hide/Unhide rules for player
+document.getElementsByClassName('rulesButton')[0].addEventListener('click', function () {
+    if((singlePlayer && turnP1) || !singlePlayer){
+        document.getElementsByClassName('rules')[0].classList.toggle('hidden');
+    }
+});
+
+document.getElementById("twoPlayer").addEventListener('click',function () {
+    document.getElementById("gameBoardCanvas").classList.remove("hidden");
+    singlePlayer = false;
+    document.getElementById("singlePlayer").classList.toggle("hidden");
+    document.getElementById("twoPlayer").classList.toggle("hidden");
+    document.getElementById("rollBtn").classList.toggle("hidden");
+    let coinFlip = [true, false];
+    turnP1 = coinFlip[ranInt(0,1)];
+    update_display();
+});
+document.getElementById("singlePlayer").addEventListener('click',function () {
+    document.getElementById("gameBoardCanvas").classList.remove("hidden");
+    singlePlayer = true;
+    document.getElementById("singlePlayer").classList.toggle("hidden");
+    document.getElementById("twoPlayer").classList.toggle("hidden");
+    document.getElementById("rollBtn").classList.toggle("hidden");
+    let coinFlip = [true, false];
+    turnP1 = coinFlip[ranInt(0,1)];
+    update_display();
+});
