@@ -47,7 +47,7 @@ let diceRoled = false;
 // variable for game over to trigger winner
 let gameOver = false;
 
-function ranInt(min,max){
+function ranInt(min, max) {
     min = min;
     max = max;
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,75 +63,75 @@ class Dice {
         this.position = [startRow, startCol];
 
         // initial list of dice sides
-        this.dieSides = [1,2,3,4,5,6];
+        this.dieSides = [1, 2, 3, 4, 5, 6];
         // choose a random side as our random starting previous face
-        this.prevFace = this.dieSides[ranInt(0,5)];
+        this.prevFace = this.dieSides[ranInt(0, 5)];
         // filter out face that was chosen
         this.dieSides = this.dieSides.filter(side => side != this.prevFace);
         // list of every die face's opposate side
         this.apposingSide = {
-            1:6,
-            2:5,
-            3:4,
-            4:3,
-            5:2,
-            6:1
+            1: 6,
+            2: 5,
+            3: 4,
+            4: 3,
+            5: 2,
+            6: 1
         };
         // filter out our randomly chosen prevFace's opposate
         this.dieSides = this.dieSides.filter(side => side != this.apposingSide[this.prevFace]);
         // now current face can be choosen randomly from an appropriate set of current faces based off random prevFace
-        this.currFace = this.dieSides[ranInt(0,3)];
+        this.currFace = this.dieSides[ranInt(0, 3)];
         // update dice image
         this.dice_frame = this.currFace - 1;
 
         // roll 3 to 10 times
-        this.numMoves = ranInt(3,10);
+        this.numMoves = ranInt(3, 10);
         // random first move
-        this.moveList = ['u','d','l','r'];
-        this.lastMove = this.moveList[ranInt(0,3)];
+        this.moveList = ['u', 'd', 'l', 'r'];
+        this.lastMove = this.moveList[ranInt(0, 3)];
 
         // determines the flow of movent a die can take based on it previous possition
         this.diceMoveFlow = {
             1: {
-                5: [3,4],   // left and right of 5 coming from 1
-                4: [5,2],   // left and right of 4 coming from 1
-                3: [2,5],   // ect...
-                2: [4,3],
+                5: [3, 4],   // left and right of 5 coming from 1
+                4: [5, 2],   // left and right of 4 coming from 1
+                3: [2, 5],   // ect...
+                2: [4, 3],
                 forward: 6  // going forward from 1
             },
             2: {
-                6: [4,3],   //left and right of 6 coming from 2
-                4: [1,6],   // ect...
-                3: [6,1],
-                1: [3,4],
+                6: [4, 3],   //left and right of 6 coming from 2
+                4: [1, 6],   // ect...
+                3: [6, 1],
+                1: [3, 4],
                 forward: 5
             },
             3: {
-                6: [2,5],
-                5: [6,1],
-                2: [1,6],
-                1: [5,2],
+                6: [2, 5],
+                5: [6, 1],
+                2: [1, 6],
+                1: [5, 2],
                 forward: 4
             },
             4: {
-                6: [5,2],
-                5: [1,6],
-                2: [6,1],
-                1: [2,5],
+                6: [5, 2],
+                5: [1, 6],
+                2: [6, 1],
+                1: [2, 5],
                 forward: 3
             },
             5: {
-                6: [3,4],
-                4: [6,1],
-                3: [1,6],
-                1: [4,3],
+                6: [3, 4],
+                4: [6, 1],
+                3: [1, 6],
+                1: [4, 3],
                 forward: 2
             },
             6: {
-                5: [4,3],
-                4: [2,5],
-                3: [5,2],
-                2: [3,4],
+                5: [4, 3],
+                4: [2, 5],
+                3: [5, 2],
+                2: [3, 4],
                 forward: 1
             }
         }
@@ -139,7 +139,7 @@ class Dice {
     }
 
     // method for moving a die
-    prefMove(){
+    prefMove() {
         if (this.numMoves > 0) {
             // use last move to get random choice of (forward left or right)
             let currentMove = this.randomMove(this.lastMove); // returns string direction(corresponding to its current direction) and 0-2 indicating (forward=0,left=1,right=2)
@@ -148,14 +148,14 @@ class Dice {
             this.lastMove = currentMove[0];
 
             // moves die and returns true/false as to weather the die moved or not(hit a wall or other die)
-            const moved = this.move(currentMove[0]); 
+            const moved = this.move(currentMove[0]);
 
             // stops dice from moving if wall was hit
             if (!moved) {
                 this.numMoves = 0; // stop loop if wall hit
                 return;
             }
-            
+
             // grabs left and right for possible move using prevFace and currFace ex. prevFace=6 and currFace=4 then the l and r choices are [2,5]
             let possMov = this.diceMoveFlow[this.prevFace][this.currFace];
             // add the forward face 
@@ -172,34 +172,34 @@ class Dice {
             this.currFace = newFace;
             this.numMoves--;
             update_display();
-            
+
             // run rext move with a delay untill we are out of moves
             setTimeout(() => this.prefMove(), 150);
         }
     }
 
     // chooses a random move (forward left or right) from last move
-    randomMove(lastMove){
+    randomMove(lastMove) {
         // only move forward or to the side, not backwards
-        if(lastMove == 'u'){
-            let moves = ['u','l','r'];
-            let dir = ranInt(0,2);
-            return [moves[dir],dir];
+        if (lastMove == 'u') {
+            let moves = ['u', 'l', 'r'];
+            let dir = ranInt(0, 2);
+            return [moves[dir], dir];
         }
-        if(lastMove == 'd'){
-            let moves = ['d','l','r'];
-            let dir = ranInt(0,2);
-            return [moves[dir],dir];
+        if (lastMove == 'd') {
+            let moves = ['d', 'l', 'r'];
+            let dir = ranInt(0, 2);
+            return [moves[dir], dir];
         }
-        if(lastMove == 'r'){
-            let moves = ['u','d','r'];
-            let dir = ranInt(0,2);
-            return [moves[dir],dir];
+        if (lastMove == 'r') {
+            let moves = ['u', 'd', 'r'];
+            let dir = ranInt(0, 2);
+            return [moves[dir], dir];
         }
-        if(lastMove == 'l'){
-            let moves = ['u','d','l'];
-            let dir = ranInt(0,2);
-            return [moves[dir],dir];
+        if (lastMove == 'l') {
+            let moves = ['u', 'd', 'l'];
+            let dir = ranInt(0, 2);
+            return [moves[dir], dir];
         }
     }
 
@@ -208,54 +208,54 @@ class Dice {
         // if going Up and in bounds of board and no wall
         if (dir == 'u' && this.position[0] - 1 >= 0 && this.board[this.position[0] - 1][this.position[1]] != 1) {
             // check each die
-            for(let i=0; i < diceList.length; i++){
+            for (let i = 0; i < diceList.length; i++) {
                 if (
                     // if die we are checking is not us
                     diceList[i].dieNum !== this.dieNum &&
                     // and there is a die above us
                     this.position[0] - 1 === diceList[i].position[0] &&
                     this.position[1] === diceList[i].position[1]
-                ){
+                ) {
                     return false; // return we did not move
                 }
             }
             // else move die and say we moved
             this.position[0]--;
             return true;
-        // for Going Down    
+            // for Going Down    
         } else if (dir == 'd' && this.position[0] + 1 < this.board.length && this.board[this.position[0] + 1][this.position[1]] != 1) {
-            for(let i=0; i < diceList.length; i++){
+            for (let i = 0; i < diceList.length; i++) {
                 if (
                     diceList[i].dieNum !== this.dieNum &&
                     this.position[0] + 1 === diceList[i].position[0] &&
                     this.position[1] === diceList[i].position[1]
-                ){
+                ) {
                     return false;
                 }
             }
             this.position[0]++;
             return true;
-        // for Going Right
+            // for Going Right
         } else if (dir == 'r' && this.position[1] + 1 < this.board[0].length && this.board[this.position[0]][this.position[1] + 1] != 1) {
-            for(let i=0; i < diceList.length; i++){
+            for (let i = 0; i < diceList.length; i++) {
                 if (
                     diceList[i].dieNum !== this.dieNum &&
                     this.position[0] === diceList[i].position[0] &&
                     this.position[1] + 1 === diceList[i].position[1]
-                ){
+                ) {
                     return false;
                 }
             }
             this.position[1]++;
             return true;
-        // for Going Left
+            // for Going Left
         } else if (dir == 'l' && this.position[1] - 1 >= 0 && this.board[this.position[0]][this.position[1] - 1] != 1) {
-            for(let i=0; i < diceList.length; i++){
+            for (let i = 0; i < diceList.length; i++) {
                 if (
                     diceList[i].dieNum !== this.dieNum &&
                     this.position[0] === diceList[i].position[0] &&
-                    this.position[1] -1  === diceList[i].position[1]
-                ){
+                    this.position[1] - 1 === diceList[i].position[1]
+                ) {
                     return false;
                 }
             }
@@ -323,21 +323,21 @@ let diceList = [];
 
 // predifined starting positions so they can be reset each round
 let startPosses = {
-    1: [4,3],
-    2: [9,3],
-    3: [4,7],
-    4: [9,11],
-    5: [4,11],
-    6: [9,7]
+    1: [4, 3],
+    2: [9, 3],
+    3: [4, 7],
+    4: [9, 11],
+    5: [4, 11],
+    6: [9, 7]
 };
 
 // add dice to the game using predifined starting positions so they can be reset each round
-diceList.push(new Dice(startPosses[1][0], startPosses[1][1],  board, dice_spritesheet, 1));
-diceList.push(new Dice(startPosses[2][0], startPosses[2][1],  board, dice_spritesheet, 2));
-diceList.push(new Dice(startPosses[3][0], startPosses[3][1],  board, dice_spritesheet, 3));
+diceList.push(new Dice(startPosses[1][0], startPosses[1][1], board, dice_spritesheet, 1));
+diceList.push(new Dice(startPosses[2][0], startPosses[2][1], board, dice_spritesheet, 2));
+diceList.push(new Dice(startPosses[3][0], startPosses[3][1], board, dice_spritesheet, 3));
 diceList.push(new Dice(startPosses[4][0], startPosses[4][1], board, dice_spritesheet, 4));
 diceList.push(new Dice(startPosses[5][0], startPosses[5][1], board, dice_spritesheet, 5));
-diceList.push(new Dice(startPosses[6][0], startPosses[6][1],  board, dice_spritesheet, 6));
+diceList.push(new Dice(startPosses[6][0], startPosses[6][1], board, dice_spritesheet, 6));
 
 // draws game to the screen
 function update_display() {
@@ -356,17 +356,17 @@ function update_display() {
             if (board[i][j] === 1) {
                 gameBoard.fillStyle = "black";
             } else {
-                if(turnP1){
+                if (turnP1) {
                     gameBoard.fillStyle = "brown";
-                }else{
+                } else {
                     gameBoard.fillStyle = "green";
                 }
             }
             gameBoard.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
 
-            if(canDraWDie){
-                for(let x=0;x<diceList.length;x++){
-                    diceList[x].draw(gameBoard,cellSize);
+            if (canDraWDie) {
+                for (let x = 0; x < diceList.length; x++) {
+                    diceList[x].draw(gameBoard, cellSize);
                 }
             }
 
@@ -399,11 +399,13 @@ Promise.all([
 // ON CLICK
 // drop dice where user clicks on gameboard
 function handleCanvasClick(event) {
-    // prevent player interaction during NPC turn
+    // prevent player interaction during NPC turn by not allowing a cursor
     if (singlePlayer && !turnP1) {
-        return;
+        canvas.classList.add("npcTurn");
+    } else {
+        canvas.classList.remove("npcTurn");
     }
-    
+
     const canvas = document.getElementById("gameBoardCanvas");
     const rect = canvas.getBoundingClientRect();
 
@@ -419,16 +421,16 @@ function handleCanvasClick(event) {
 
     // Check if the cell is in bounds
     if (row >= 0 && row < board.length && col >= 0 && col < board[0].length) {
-        for(let i=0; i<diceList.length; i++){
+        for (let i = 0; i < diceList.length; i++) {
             // if there is a die where we clicked and it is being displayed aka at play
-            if(row == diceList[i].position[0] && col == diceList[i].position[1] && canDraWDie){
+            if (row == diceList[i].position[0] && col == diceList[i].position[1] && canDraWDie) {
                 // save the die number visible to player
                 let diceFaceNum = diceList[i].dice_frame + 1;
-                
+
                 // make a new element to depict die outside of canvas
                 const chosenDie = document.createElement('div');
                 // grab correct class that corresponds to die face from sprite-sheet used by css
-                chosenDie.className = 'Die_'+diceFaceNum; 
+                chosenDie.className = 'Die_' + diceFaceNum;
 
                 // make it a child to be dsiplayed
                 diceStagingArea.appendChild(chosenDie);
@@ -436,7 +438,7 @@ function handleCanvasClick(event) {
                 // push to scoreBoard for point calculating use
                 scoreBoard.push(diceFaceNum);
                 // Remove the die from the board
-                diceList.splice(i, 1);  
+                diceList.splice(i, 1);
 
                 // signal a die has been used this turn
                 diePickedUp = true;
@@ -454,9 +456,9 @@ function handleCanvasClick(event) {
     currentPossiblePoints = scoreIt(scoreBoard);
 }
 
-function diceOnTable(){
+function diceOnTable() {
     let tableDice = [];
-    for(let i=0; i<diceList.length; i++){
+    for (let i = 0; i < diceList.length; i++) {
         // save the dice on the table
         let diceFaceNum = diceList[i].dice_frame + 1;
         tableDice.push(diceFaceNum);
@@ -465,41 +467,41 @@ function diceOnTable(){
 }
 
 // checks of player has bungled their turn
-function goofCheck(){
+function goofCheck() {
     let diceAtPlay = diceOnTable();
     // after every die has stopped moving
-    if(diceList.filter(die => die.numMoves <= 0).length === diceList.length && diceRoled){
+    if (diceList.filter(die => die.numMoves <= 0).length === diceList.length && diceRoled) {
 
-        if( // if num of specific die on table is at least 1 and we have at least 2 more in the saved dice area then no Goof
-        (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2) ||
-        (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2) ||
-        (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2) ||
-        (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2) ||
+        if ( // if num of specific die on table is at least 1 and we have at least 2 more in the saved dice area then no Goof
+            (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2) ||
+            (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2) ||
+            (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2) ||
+            (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2) ||
 
-        // the reverse logic 2 of a type in dice bank and at least one of that type at play
-        (scoreBoard.filter(count => count === 2).length >= 1 && diceAtPlay.filter(count => count === 2).length >= 2) ||
-        (scoreBoard.filter(count => count === 3).length >= 1 && diceAtPlay.filter(count => count === 3).length >= 2) ||
-        (scoreBoard.filter(count => count === 4).length >= 1 && diceAtPlay.filter(count => count === 4).length >= 2) ||
-        (scoreBoard.filter(count => count === 6).length >= 1 && diceAtPlay.filter(count => count === 6).length >= 2) ||
+            // the reverse logic 2 of a type in dice bank and at least one of that type at play
+            (scoreBoard.filter(count => count === 2).length >= 1 && diceAtPlay.filter(count => count === 2).length >= 2) ||
+            (scoreBoard.filter(count => count === 3).length >= 1 && diceAtPlay.filter(count => count === 3).length >= 2) ||
+            (scoreBoard.filter(count => count === 4).length >= 1 && diceAtPlay.filter(count => count === 4).length >= 2) ||
+            (scoreBoard.filter(count => count === 6).length >= 1 && diceAtPlay.filter(count => count === 6).length >= 2) ||
 
-        // or player has a set
-        checkSet(diceAtPlay.concat(scoreBoard)) ||
-        // or if player has a run of doubles ex. 3 pairs
-        checkDoubles(diceAtPlay.concat(scoreBoard)) ||
-        // or they at least roled a 1 or 5 
-        diceAtPlay.filter(count => count === 1).length >= 1 || 
-        diceAtPlay.filter(count => count === 5).length >= 1 ||
-        // or there is three or more of a kind on the table then no Goof
-        diceAtPlay.filter(count => count === 2).length > 2 ||
-        diceAtPlay.filter(count => count === 3).length > 2 ||
-        diceAtPlay.filter(count => count === 4).length > 2 ||
-        diceAtPlay.filter(count => count === 6).length > 2 
-        ){
+            // or player has a set
+            checkSet(diceAtPlay.concat(scoreBoard)) ||
+            // or if player has a run of doubles ex. 3 pairs
+            checkDoubles(diceAtPlay.concat(scoreBoard)) ||
+            // or they at least roled a 1 or 5 
+            diceAtPlay.filter(count => count === 1).length >= 1 ||
+            diceAtPlay.filter(count => count === 5).length >= 1 ||
+            // or there is three or more of a kind on the table then no Goof
+            diceAtPlay.filter(count => count === 2).length > 2 ||
+            diceAtPlay.filter(count => count === 3).length > 2 ||
+            diceAtPlay.filter(count => count === 4).length > 2 ||
+            diceAtPlay.filter(count => count === 6).length > 2
+        ) {
             // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
             diceRoled = false;
             goofed = false;
             return false;
-        }else{
+        } else {
             // reset so we dont just keep checking, otherwise say user leaves a 2 they wish to reroll it will count as a goof 
             diceRoled = false;
             goofed = true;
@@ -509,85 +511,85 @@ function goofCheck(){
 }
 
 // roll dice button 
-document.getElementById("rollBtn").onclick = function(){
+document.getElementById("rollBtn").onclick = function () {
     // button only works if a dice has been used and at least one die is on the board
-    if(diePickedUp && scoreBoard.length < 6){
+    if (diePickedUp && scoreBoard.length < 6) {
         // dice can be displayed
         canDraWDie = true;
         // update_display right after click so we can see first die face
         update_display();
 
         // set up each die at player
-        for(let i=0; i<diceList.length; i++){
-            diceList[i].position = [startPosses[diceList[i].dieNum][0],startPosses[diceList[i].dieNum][1]];
+        for (let i = 0; i < diceList.length; i++) {
+            diceList[i].position = [startPosses[diceList[i].dieNum][0], startPosses[diceList[i].dieNum][1]];
             // move randomly between 3 to 10 moves
-            diceList[i].numMoves = ranInt(3,10);
+            diceList[i].numMoves = ranInt(3, 10);
         }
 
         // trigger dice movement
-        for(let i=0;i<diceList.length;i++){
+        for (let i = 0; i < diceList.length; i++) {
             diceList[i].prefMove();
         }
-        
+
         // reset after each roll
         diePickedUp = false;
         diceRoled = true;
-    }    
+    }
 };
 
 // CHECK FOR IF PLAYER GOOFED
-setInterval(catchGoof,500);
-function catchGoof(){
+setInterval(catchGoof, 500);
+function catchGoof() {
     // will toggle it self off until next goof
-    if(goofed){
+    if (goofed) {
         // display the player that Goofed
-        if(turnP1){
+        if (turnP1) {
             document.getElementById("currScore").innerHTML = "Current possible points: Player 1 Goofed";
-        }else{
+        } else {
             document.getElementById("currScore").innerHTML = "Current possible points: Player 2 Goofed";
         }
-        
+
         // wait so user can see their goof
-        setTimeout(Goofed,200);
+        setTimeout(Goofed, 200);
         // reset this trigger
         goofed = false;
     }
 }
-function Goofed(){
+function Goofed() {
     // switch current player turn
-        turnP1 = !turnP1;
-        
-        resetBoard();
-        currentPossiblePoints = 0;
-        scoreBoard = [];
-        // reset to true so that fisrt roll can happen for next player
-        diePickedUp = true;
-        document.getElementById("keepScore").classList.add("hidden");
+    turnP1 = !turnP1;
+
+    resetBoard();
+    currentPossiblePoints = 0;
+    scoreBoard = [];
+    // reset to true so that fisrt roll can happen for next player
+    diePickedUp = true;
+    document.getElementById("keepScore").classList.add("hidden");
 }
 
 // When player presses the keep score button
-document.getElementById("keepScore").onclick = function(){
+document.getElementById("keepScore").onclick = function () {
     // reset board for next player
     resetBoard();
     // hide button
     document.getElementById("keepScore").classList.add("hidden");
     // give points to the correct player
-    if(turnP1){
+    if (turnP1) {
         // update players points and visible score
         player_1_score += currentPossiblePoints;
-        document.getElementById("p1").innerHTML = 'Player 1: '+ player_1_score;
+        document.getElementById("p1").innerHTML = 'Player 1: ' + player_1_score;
         // reset displayed possible points for next player
         document.getElementById("currScore").innerHTML = "Current possible points: 0";
-    }else{
+    } else {
         player_2_score += currentPossiblePoints;
-        document.getElementById("p2").innerHTML = 'Player 2: '+ player_2_score;
+        document.getElementById("p2").innerHTML = 'Player 2: ' + player_2_score;
         document.getElementById("currScore").innerHTML = "Current possible points: 0";
     }
     // empty score board
     scoreBoard = [];
     // set to true for next players first role
     diePickedUp = true;
-    if(turnP1){
+    if (turnP1) {
         agentGoof = false;
     }
     // switch current player turn
@@ -595,18 +597,18 @@ document.getElementById("keepScore").onclick = function(){
     update_display();
 };
 
-function resetBoard(){
+function resetBoard() {
     // clear out the dice saved display
     document.getElementById('StagedDice').innerHTML = '';
     // clear dice in use
     diceList = [];
     // reset table
-    diceList.push(new Dice(startPosses[1][0], startPosses[1][1],  board, dice_spritesheet, 1));
-    diceList.push(new Dice(startPosses[2][0], startPosses[2][1],  board, dice_spritesheet, 2));
-    diceList.push(new Dice(startPosses[3][0], startPosses[3][1],  board, dice_spritesheet, 3));
+    diceList.push(new Dice(startPosses[1][0], startPosses[1][1], board, dice_spritesheet, 1));
+    diceList.push(new Dice(startPosses[2][0], startPosses[2][1], board, dice_spritesheet, 2));
+    diceList.push(new Dice(startPosses[3][0], startPosses[3][1], board, dice_spritesheet, 3));
     diceList.push(new Dice(startPosses[4][0], startPosses[4][1], board, dice_spritesheet, 4));
     diceList.push(new Dice(startPosses[5][0], startPosses[5][1], board, dice_spritesheet, 5));
-    diceList.push(new Dice(startPosses[6][0], startPosses[6][1],  board, dice_spritesheet, 6));
+    diceList.push(new Dice(startPosses[6][0], startPosses[6][1], board, dice_spritesheet, 6));
 
     // turn off die display and draw table
     canDraWDie = false;
@@ -617,88 +619,88 @@ function checkSet(list) {
     return new Set(list).size === list.length;
 }
 
-function checkDoubles(list){
+function checkDoubles(list) {
     // only a double if its also 3 pairs
-    if(list.length != 6){return false;}
-    for(let i=0; i<list.length; i++){
-        if(list.filter(die => die === i+1).length > 2 || list.filter(die => die === i+1).length == 1){
+    if (list.length != 6) { return false; }
+    for (let i = 0; i < list.length; i++) {
+        if (list.filter(die => die === i + 1).length > 2 || list.filter(die => die === i + 1).length == 1) {
             return false;
         }
     }
     return true;
 }
 
-function scoreIt(scoreList){
+function scoreIt(scoreList) {
     // check for set
-    if(scoreList.length === 6 && checkSet(scoreList)){
+    if (scoreList.length === 6 && checkSet(scoreList)) {
         return 2500
     }
     // if we have three doubles
-    if(checkDoubles(scoreList)){
+    if (checkDoubles(scoreList)) {
         return 1500;
     }
 
     let total = 0;
     // check for triples or greater
     let sum = scoreList.filter(die => die == 2).length;
-    if(sum >=3) total += sum * 50;
+    if (sum >= 3) total += sum * 50;
 
     sum = scoreList.filter(die => die == 3).length;
-    if(sum >=3) total += sum * 75;
+    if (sum >= 3) total += sum * 75;
 
     sum = scoreList.filter(die => die == 4).length;
-    if(sum >=3) total += sum * 100;
+    if (sum >= 3) total += sum * 100;
 
     sum = scoreList.filter(die => die == 6).length;
-    if(sum >=3) total += sum * 150;
+    if (sum >= 3) total += sum * 150;
 
     // check for 1's or 5's
-    total += scoreList.filter(die => die == 1).length * 100 
+    total += scoreList.filter(die => die == 1).length * 100
     total += scoreList.filter(die => die == 5).length * 50
     return total;
 }
 let agentGoof = false;
 // displays who's turn it currently is
-setInterval(currentTurn,1000);
-function currentTurn(){
-    if(player_1_score >= 5000 || player_2_score >= 5000){
+setInterval(currentTurn, 1000);
+function currentTurn() {
+    if (player_1_score >= 5000 || player_2_score >= 5000) {
         gameOver = true;
         document.getElementById("rollBtn").classList.add("hidden");
         document.getElementById("gameBoardCanvas").classList.add("hidden");
     }
-    if(!gameOver){
-        if(!singlePlayer){
-            setTimeout(goofCheck,100);
-            if(turnP1){
+    if (!gameOver) {
+        if (!singlePlayer) {
+            setTimeout(goofCheck, 100);
+            if (turnP1) {
                 document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
-            }else{
+            } else {
                 document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
             }
-        }else{
-            if(turnP1){
-                setTimeout(goofCheck,100);
+        } else {
+            if (turnP1) {
+                setTimeout(goofCheck, 100);
                 document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 1;
                 agentGoof = false;
-            }else{
+            } else {
                 document.getElementById("PTurn").innerHTML = "PLAYER'S TURN: " + 2;
             }
             if (!turnP1 && singlePlayer && !agentGoof) {
                 npcTurn();
             }
         }
-    }else{
-        
-        if(player_1_score > player_2_score){
+    } else {
+
+        if (player_1_score > player_2_score) {
             document.getElementById("gameOverBanner").innerHTML = "Winner Player 1!";
             document.getElementById("gameOverBanner").classList.remove('hidden');
-        }else if(player_1_score < player_2_score){
+        } else if (player_1_score < player_2_score) {
             document.getElementById("gameOverBanner").innerHTML = "Winner Player 2!";
             document.getElementById("gameOverBanner").classList.remove('hidden');
-        }else if( player_1_score == player_2_score){
+        } else if (player_1_score == player_2_score) {
             document.getElementById("gameOverBanner").innerHTML = "Tieieie";
             document.getElementById("gameOverBanner").classList.remove('hidden');
         }
-        
+
     }
 }
 
@@ -707,7 +709,7 @@ function npcTurn() {
     // Only act if it's Player 2's turn
     if (!turnP1) {
         // if there are no die to pick up and we didn't goof then keep score
-        if(diceList.length <= 0){
+        if (diceList.length <= 0) {
             document.getElementById("keepScore").click();
             return;
         }
@@ -717,10 +719,10 @@ function npcTurn() {
         diePickedUp = false;
 
         // wait for all die to stop rolling
-        if(diceList.filter(die => die.numMoves <= 0).length === diceList.length){
+        if (diceList.filter(die => die.numMoves <= 0).length === diceList.length) {
             // check if we goofed after dice settle
             agentGoof = goofCheck();
-            if(!agentGoof){
+            if (!agentGoof) {
                 // only applies if dice are on the table
                 let chanceToRollAgain = 100; // a % chance
                 // there are die to pick up
@@ -729,42 +731,42 @@ function npcTurn() {
                     let targetDieIndex = 0;
                     let diceAtPlay = diceOnTable();
                     // if we are lucky and a set is found on 1st roll
-                    if(new Set(diceAtPlay).size === 6 || new Set(diceAtPlay.concat(scoreBoard)).size === 6){
+                    if (new Set(diceAtPlay).size === 6 || new Set(diceAtPlay.concat(scoreBoard)).size === 6) {
                         targetDieIndex = 0;
-                    }else if(checkDoubles(diceAtPlay)||checkDoubles(diceAtPlay.concat(scoreBoard))){
+                    } else if (checkDoubles(diceAtPlay) || checkDoubles(diceAtPlay.concat(scoreBoard))) {
                         targetDieIndex = 0;
                     }
-                    else if(diceAtPlay.filter(count => count === 6).length > 2 ||
-                        (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2)||
+                    else if (diceAtPlay.filter(count => count === 6).length > 2 ||
+                        (diceAtPlay.filter(count => count === 6).length >= 1 && scoreBoard.filter(count => count === 6).length >= 2) ||
                         (diceAtPlay.filter(count => count === 6).length >= 2 && scoreBoard.filter(count => count === 6).length >= 1)
-                    ){
+                    ) {
                         targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 6);
                     }
-                    else if(diceAtPlay.filter(count => count === 4).length > 2 ||
-                            (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2)||
-                            (diceAtPlay.filter(count => count === 4).length >= 2 && scoreBoard.filter(count => count === 4).length >= 1)){
+                    else if (diceAtPlay.filter(count => count === 4).length > 2 ||
+                        (diceAtPlay.filter(count => count === 4).length >= 1 && scoreBoard.filter(count => count === 4).length >= 2) ||
+                        (diceAtPlay.filter(count => count === 4).length >= 2 && scoreBoard.filter(count => count === 4).length >= 1)) {
                         targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 4);
                     }
-                    else if(diceAtPlay.filter(count => count === 3).length > 2 ||
-                            (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2)||
-                            (diceAtPlay.filter(count => count === 3).length >= 2 && scoreBoard.filter(count => count === 3).length >= 1)){
+                    else if (diceAtPlay.filter(count => count === 3).length > 2 ||
+                        (diceAtPlay.filter(count => count === 3).length >= 1 && scoreBoard.filter(count => count === 3).length >= 2) ||
+                        (diceAtPlay.filter(count => count === 3).length >= 2 && scoreBoard.filter(count => count === 3).length >= 1)) {
                         targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 3);
                     }
-                    else if(diceAtPlay.filter(count => count === 2).length > 2 ||
-                            (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2)||
-                            (diceAtPlay.filter(count => count === 2).length >= 2 && scoreBoard.filter(count => count === 2).length >= 1)){
+                    else if (diceAtPlay.filter(count => count === 2).length > 2 ||
+                        (diceAtPlay.filter(count => count === 2).length >= 1 && scoreBoard.filter(count => count === 2).length >= 2) ||
+                        (diceAtPlay.filter(count => count === 2).length >= 2 && scoreBoard.filter(count => count === 2).length >= 1)) {
                         targetDieIndex = diceList.findIndex(die => die.dice_frame + 1 === 2);
                     }
-                    else{
+                    else {
                         // find a scoring die ( 1 or 5 )
-                        targetDieIndex = diceList.findIndex(die => 
+                        targetDieIndex = diceList.findIndex(die =>
                             die.dice_frame + 1 === 1 || die.dice_frame + 1 === 5
                         );
                     }
-                    
+
                     // the less dice we have the less likely we are to role again
-                    chanceToRollAgain -= ((6 - diceAtPlay.length) * 15); 
-                    if(targetDieIndex < 0 ){
+                    chanceToRollAgain -= ((6 - diceAtPlay.length) * 15);
+                    if (targetDieIndex < 0) {
                         diePickedUp = true;
                     }
                     // if there are 1's or 5's
@@ -790,20 +792,21 @@ function npcTurn() {
                         update_display();
                     }
                     // if there are no 1's or 5's
-                    else{
-                        
-                        if(ranInt(1,100) > chanceToRollAgain || diceList.length <= 0){
+                    else {
+
+                        if (ranInt(1, 100) > chanceToRollAgain || diceList.length <= 0) {
                             document.getElementById("keepScore").click();
-                        }else{
+                        } else {
                             // if there is still dice and player didn't goof
-                            if(diceList.length > 0 && !agentGoof && diePickedUp){
+                            if (diceList.length > 0 && !agentGoof && diePickedUp) {
                                 // diePickedUp = true;
                                 // roll again
                                 document.getElementById("rollBtn").click();
-                            }else{
+                            } else {
                                 // else keep our score
-                                if(!agentGoof){
-                                document.getElementById("keepScore").click();}
+                                if (!agentGoof) {
+                                    document.getElementById("keepScore").click();
+                                }
                             }
                         }
                     }
@@ -815,28 +818,28 @@ function npcTurn() {
 
 // Hide/Unhide rules for player
 document.getElementsByClassName('rulesButton')[0].addEventListener('click', function () {
-    if((singlePlayer && turnP1) || !singlePlayer){
+    if ((singlePlayer && turnP1) || !singlePlayer) {
         document.getElementsByClassName('rules')[0].classList.toggle('hidden');
     }
 });
 
-document.getElementById("twoPlayer").addEventListener('click',function () {
+document.getElementById("twoPlayer").addEventListener('click', function () {
     document.getElementById("gameBoardCanvas").classList.remove("hidden");
     singlePlayer = false;
     document.getElementById("singlePlayer").classList.toggle("hidden");
     document.getElementById("twoPlayer").classList.toggle("hidden");
     document.getElementById("rollBtn").classList.toggle("hidden");
     let coinFlip = [true, false];
-    turnP1 = coinFlip[ranInt(0,1)];
+    turnP1 = coinFlip[ranInt(0, 1)];
     update_display();
 });
-document.getElementById("singlePlayer").addEventListener('click',function () {
+document.getElementById("singlePlayer").addEventListener('click', function () {
     document.getElementById("gameBoardCanvas").classList.remove("hidden");
     singlePlayer = true;
     document.getElementById("singlePlayer").classList.toggle("hidden");
     document.getElementById("twoPlayer").classList.toggle("hidden");
     document.getElementById("rollBtn").classList.toggle("hidden");
     let coinFlip = [true, false];
-    turnP1 = coinFlip[ranInt(0,1)];
+    turnP1 = coinFlip[ranInt(0, 1)];
     update_display();
 });

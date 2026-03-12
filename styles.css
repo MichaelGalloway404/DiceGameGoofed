@@ -167,6 +167,11 @@ button:active{
   display:none !important;
 }
 
+/* ---------- TOGGLE CURSOR ---------*/
+canvas.npcTurn{
+  cursor: not-allowed;
+}
+
 /* ---------- MOBILE ---------- */
 
 @media (max-width:700px){
