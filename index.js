@@ -399,6 +399,11 @@ Promise.all([
 // ON CLICK
 // drop dice where user clicks on gameboard
 function handleCanvasClick(event) {
+    // prevent player interaction during NPC turn
+    if (singlePlayer && !turnP1) {
+        return;
+    }
+    
     const canvas = document.getElementById("gameBoardCanvas");
     const rect = canvas.getBoundingClientRect();
 
