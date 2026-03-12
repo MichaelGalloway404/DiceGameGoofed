@@ -47,6 +47,9 @@ let diceRoled = false;
 // variable for game over to trigger winner
 let gameOver = false;
 
+// game board
+const canvas = document.getElementById("gameBoardCanvas");
+
 function ranInt(min, max) {
     min = min;
     max = max;
@@ -399,13 +402,6 @@ Promise.all([
 // ON CLICK
 // drop dice where user clicks on gameboard
 function handleCanvasClick(event) {
-    // prevent player interaction during NPC turn by not allowing a cursor
-    if (singlePlayer && !turnP1) {
-        canvas.classList.add("npcTurn");
-    } else {
-        canvas.classList.remove("npcTurn");
-    }
-
     const canvas = document.getElementById("gameBoardCanvas");
     const rect = canvas.getBoundingClientRect();
 
@@ -663,6 +659,13 @@ let agentGoof = false;
 // displays who's turn it currently is
 setInterval(currentTurn, 1000);
 function currentTurn() {
+    // prevent player interaction during NPC turn by not allowing a cursor
+    if (singlePlayer && !turnP1) {
+        canvas.classList.add("npcTurn");
+    } else {
+        canvas.classList.remove("npcTurn");
+    }
+    
     if (player_1_score >= 5000 || player_2_score >= 5000) {
         gameOver = true;
         document.getElementById("rollBtn").classList.add("hidden");
